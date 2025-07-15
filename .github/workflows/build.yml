@@ -1,0 +1,30 @@
+name: Test Project # name of workflow
+
+# Create trigger, which is going to tell GitHub Actions when we want to run our workflow.
+# You can run workflow using a variety of triggers. For example everytime we push code to our main branch,
+# we might want to deploy it to our production server automatically so that we don't have to do it ourselves.
+# Or every time we create a new pull request, we might want to test the code to make sure that eveyrthing is working
+# before we merge that code into our main branch.
+
+# Note: there is a huge list of different triggers that you can use within GitHub Actions. 
+# https://docs.github.com/en/actions/reference/events-that-trigger-workflows
+
+on: 
+  pull_request: # Since this workflow is going to be used to test our code, we are going to run it every time a pull request 
+    branches:   # to the main branch is created
+      - main
+      # If we have a feature to merge into main branch, I would create a pull request which would trigger the workflow. 
+
+# Next, create a list of jobs that we want to include in our workflow
+jobs:
+  test: # name of job
+    runs-on: ubuntu-latest # operating system that we want the job to run on, ubuntu is the most common one to use with GitHub Actions
+    container:
+      image: node:20  # Automatically install Node.js instead of having to install manually through cmd line using ubuntu
+    steps:
+      - uses: actions/checkout@v3 # 1st step is to add our code to virtual environment using checkout action
+        with:
+          node-version: 20  # selects the version of Node.js to use
+      - run: npm ci         # clean installs all dependencies of your project
+      - run: npm test       # runs tests (Jest with JavaScript)
+      - run: npm run build  # build script to compile project
